@@ -14,6 +14,7 @@ import (
 func interractRoutine(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
 
+	// receiving pow algorithm
 	_, err := helper.ScanReq(scanner)
 	if err != nil {
 		log.Printf("error occured while request PoW algorhytm: %v", err)
@@ -23,6 +24,7 @@ func interractRoutine(conn net.Conn) {
 
 	helper.SendResp(conn, []byte("OK"))
 
+	// receiving hash
 	hash, err := helper.ScanReq(scanner)
 	if err != nil {
 		log.Printf("error occured while request hash: %v", err)
@@ -30,13 +32,16 @@ func interractRoutine(conn net.Conn) {
 		return
 	}
 
+	// resolve puzzle
 	nonce, err := pow.ResolveHashcash(hash)
 	if err != nil {
 		log.Printf("error occured while resolve hashcash: %v", err)
 	}
 
+	// sending nonce
 	helper.SendResp(conn, nonce)
 
+	// receiving phrase
 	quote, err := helper.ScanReq(scanner)
 	if err != nil {
 		log.Printf("error occured while request quote: %v", err)

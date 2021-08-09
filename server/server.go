@@ -30,11 +30,11 @@ func handleConnection(conn net.Conn) {
 }
 
 func verify(conn net.Conn) (bool, error) {
-	log.Println("sending pow algorhytm")
+	// sending pow algorhytm
 	helper.SendResp(conn, []byte("hashcash"))
 
 	scanner := bufio.NewScanner(conn)
-	log.Println("getting response if client support algorythm")
+	// getting response if client support algorythm
 	support, err := helper.ScanReq(scanner)
 	if err != nil {
 		return false, err
@@ -44,18 +44,17 @@ func verify(conn net.Conn) (bool, error) {
 		return false, errors.New("client does not support algorhytm")
 	}
 
-	log.Println("sending hash")
+	// sending hash
 	hash := getHash()
 	helper.SendResp(conn, hash)
 
-	log.Println("receiving nonce")
+	// receiving nonce
 	n, err := helper.ScanReq(scanner)
 	if err != nil {
 		return false, err
 	}
 
-	log.Println("checking solution")
-
+	// checking solution
 	return pow.Check(append(hash, n...)), nil
 }
 
